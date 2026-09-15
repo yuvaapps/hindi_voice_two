@@ -1,0 +1,20 @@
+
+const Map<String, String> hiStrings = {
+  'app_title': 'हिंदी वस्तु गणना',
+  'subtitle': 'चित्रित वस्तुएं गिनें और उत्तर दें',
+  'start_learning': 'वस्तुएं गिनें',
+  'practice': 'अभ्यास',
+  'progress': 'प्रगति',
+  'settings': 'सेटिंग्स',
+  'prompt_prefix': 'कितने',
+  'prompt_suffix': 'हैं?',
+  'great_job': 'बहुत बढ़िया! 🎉',
+  'try_again': 'फिर गिनें 😊',
+  'next': 'अगला',
+  'completed_items': 'सफल वस्तु गणना',
+  'language': 'भाषा',
+  'sound': 'ध्वनि',
+  'reset_progress': 'प्रगति रीसेट करें',
+  'about': 'ऐप के बारे में',
+  'about_desc': 'मनोरंजक वस्तु गणना खेल 100% ऑफ़लाइन।',
+};

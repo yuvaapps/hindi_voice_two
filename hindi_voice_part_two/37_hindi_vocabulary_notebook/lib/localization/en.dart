@@ -1,0 +1,21 @@
+
+const Map<String, String> enStrings = {
+  'app_title': 'Hindi Vocabulary Notebook',
+  'subtitle': 'Thematic vocabulary notebook for kids',
+  'start_learning': 'Learn Vocabulary',
+  'practice': 'Practice',
+  'progress': 'Progress',
+  'settings': 'Settings',
+  'all': 'All',
+  'animals': 'Animals',
+  'fruits': 'Fruits',
+  'vegetables': 'Vegetables',
+  'body': 'Body Parts',
+  'nature': 'Nature',
+  'completed_items': 'Learned Words',
+  'language': 'Language',
+  'sound': 'Sound',
+  'reset_progress': 'Reset Progress',
+  'about': 'About App',
+  'about_desc': '100% Offline thematic Hindi vocabulary notebook.',
+};

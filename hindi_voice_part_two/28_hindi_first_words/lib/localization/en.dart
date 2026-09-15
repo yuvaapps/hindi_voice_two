@@ -1,0 +1,22 @@
+
+const Map<String, String> enStrings = {
+  'app_title': 'Hindi First Words',
+  'subtitle': 'First Hindi words for toddlers',
+  'start_learning': 'Hear & Learn',
+  'practice': 'Guess Who?',
+  'progress': 'Progress',
+  'settings': 'Settings',
+  'completed_items': 'Learned Words',
+  'total_score': 'Total Score',
+  'great_job': 'Great Job! 🎉',
+  'try_again': 'Try Again 😊',
+  'next': 'Next',
+  'listen_prompt': 'Touch the card to hear the word!',
+  'language': 'Language',
+  'sound': 'Sound',
+  'sound_on': 'Sound On',
+  'sound_off': 'Sound Off',
+  'reset_progress': 'Reset Progress',
+  'about': 'About App',
+  'about_desc': '100% Offline first Hindi words for toddlers.',
+};

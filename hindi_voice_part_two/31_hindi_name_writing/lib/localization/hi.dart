@@ -1,0 +1,22 @@
+
+const Map<String, String> hiStrings = {
+  'app_title': 'हिंदी नाम लेखन',
+  'subtitle': 'सुंदर हिंदी नाम लिखना सीखें',
+  'home': 'होम',
+  'learn': 'सीखें',
+  'start_learning': 'नाम लिखना सीखें',
+  'practice': 'नाम लेखन स्लेट',
+  'progress': 'प्रगति',
+  'settings': 'सेटिंग्स',
+  'clear': 'साफ़ करें',
+  'next': 'अगला नाम',
+  'retry': 'दोबारा लिखें',
+  'completed_items': 'लिखे गए नाम',
+  'total_score': 'कुल अंक',
+  'great_job': 'शानदार लिखावट! 🎉',
+  'language': 'भाषा',
+  'sound': 'ध्वनि',
+  'reset_progress': 'प्रगति रीसेट करें',
+  'about': 'ऐप के बारे में',
+  'about_desc': 'बच्चों के लिए हिंदी नाम लेखन अभ्यास 100% ऑफ़लाइन।',
+};

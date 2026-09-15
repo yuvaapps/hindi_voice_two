@@ -1,0 +1,20 @@
+
+const Map<String, String> enStrings = {
+  'app_title': 'Hindi Counting Objects',
+  'subtitle': 'Count illustrated objects and answer',
+  'start_learning': 'Count Objects',
+  'practice': 'Practice',
+  'progress': 'Progress',
+  'settings': 'Settings',
+  'prompt_prefix': 'How many',
+  'prompt_suffix': 'are there?',
+  'great_job': 'Excellent! 🎉',
+  'try_again': 'Count again 😊',
+  'next': 'Next',
+  'completed_items': 'Successful Countings',
+  'language': 'Language',
+  'sound': 'Sound',
+  'reset_progress': 'Reset Progress',
+  'about': 'About App',
+  'about_desc': '100% Offline visual object counting game for kids.',
+};

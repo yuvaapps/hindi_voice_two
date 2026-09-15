@@ -1,0 +1,22 @@
+
+const Map<String, String> hiStrings = {
+  'app_title': 'हिंदी पहले शब्द',
+  'subtitle': 'नन्हे बच्चों के पहले प्यारे शब्द',
+  'start_learning': 'शब्द सुनें और बोलें',
+  'practice': 'पहचानो कौन?',
+  'progress': 'प्रगति',
+  'settings': 'सेटिंग्स',
+  'completed_items': 'सीखे गए शब्द',
+  'total_score': 'कुल अंक',
+  'great_job': 'शाबाश! बहुत बढ़िया! 🎉',
+  'try_again': 'फिर कोशिश करो 😊',
+  'next': 'अगला',
+  'listen_prompt': 'चित्र छुओ और आवाज़ सुनो!',
+  'language': 'भाषा',
+  'sound': 'ध्वनि',
+  'sound_on': 'ध्वनि चालू',
+  'sound_off': 'ध्वनि बंद',
+  'reset_progress': 'प्रगति रीसेट करें',
+  'about': 'ऐप के बारे में',
+  'about_desc': 'छोटे बच्चों के पहले हिंदी शब्द 100% ऑफ़लाइन।',
+};

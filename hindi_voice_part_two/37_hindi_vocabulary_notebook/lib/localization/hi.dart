@@ -1,0 +1,21 @@
+
+const Map<String, String> hiStrings = {
+  'app_title': 'हिंदी शब्दकोश नोटबुक',
+  'subtitle': 'श्रेणी अनुसार 10+ विषयों के शब्द',
+  'start_learning': 'शब्दावली सीखें',
+  'practice': 'अभ्यास',
+  'progress': 'प्रगति',
+  'settings': 'सेटिंग्स',
+  'all': 'सभी',
+  'animals': 'जानवर',
+  'fruits': 'फल',
+  'vegetables': 'सब्जियाँ',
+  'body': 'शरीर',
+  'nature': 'प्रकृति',
+  'completed_items': 'सीखे गए शब्द',
+  'language': 'भाषा',
+  'sound': 'ध्वनि',
+  'reset_progress': 'प्रगति रीसेट करें',
+  'about': 'ऐप के बारे में',
+  'about_desc': 'थीम आधारित हिंदी शब्दावली नोटबुक 100% ऑफ़लाइन।',
+};

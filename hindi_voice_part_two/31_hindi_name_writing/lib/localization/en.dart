@@ -1,0 +1,22 @@
+
+const Map<String, String> enStrings = {
+  'app_title': 'Hindi Name Writing',
+  'subtitle': 'Learn to write beautiful Hindi names',
+  'home': 'Home',
+  'learn': 'Learn',
+  'start_learning': 'Learn Writing Names',
+  'practice': 'Name Writing Slate',
+  'progress': 'Progress',
+  'settings': 'Settings',
+  'clear': 'Clear',
+  'next': 'Next Name',
+  'retry': 'Retry',
+  'completed_items': 'Completed Names',
+  'total_score': 'Total Score',
+  'great_job': 'Great Handwriting! 🎉',
+  'language': 'Language',
+  'sound': 'Sound',
+  'reset_progress': 'Reset Progress',
+  'about': 'About App',
+  'about_desc': '100% Offline Hindi name writing practice for kids.',
+};
