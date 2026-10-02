@@ -1,46 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
-
-  <!-- iOS meta tags & icons -->
+  <meta name="description" content="Hindi Number Writing - Practice writing Hindi numbers with audio support">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="app45_hindi_number_writing">
+  <meta name="apple-mobile-web-app-title" content="Hindi Number Writing">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>app45_hindi_number_writing</title>
+  <title>Hindi Number Writing | हिंदी लिखना सीखें</title>
   <link rel="manifest" href="manifest.json">
+  <script>
+    // Hindi TTS Engine — called by AudioService on web
+    window.speakHindi = function(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      var map = {
+        'ek':'एक','do':'दो','teen':'तीन','chaar':'चार','paanch':'पाँच',
+        'chhah':'छह','saat':'सात','aath':'आठ','nau':'नौ','das':'दस',
+        'gyaarah':'ग्यारह','baarah':'बारह','terah':'तेरह','chaudah':'चौदह',
+        'pandrah':'पंद्रह','solah':'सोलह','satrah':'सत्रह','attharah':'अठारह',
+        'unnees':'उन्नीस','bees':'बीस','tees':'तीस','chaalees':'चालीस',
+        'pachaas':'पचास','saath':'साठ','sattar':'सत्तर','assi':'अस्सी',
+        'nabbe':'नब्बे','sau':'सौ',
+        'kuttaa':'कुत्ता','billi':'बिल्ली','gaay':'गाय','ghoda':'घोड़ा',
+        'haathi':'हाथी','sher':'शेर','baagh':'बाघ','bandar':'बंदर',
+        'hiran':'हिरण','kharagosh':'खरगोश','bhaalu':'भालू','lomdi':'लोमड़ी',
+        'mor':'मोर','tota':'तोता','kaua':'कौआ','machhli':'मछली',
+        'seb':'सेब','kela':'केला','aam':'आम','angur':'अंगूर','santra':'संतरा',
+        'anaanas':'अनानास','tarbuz':'तरबूज','papita':'पपीता',
+        'naariyal':'नारियल','amrud':'अमरूद','anaar':'अनार',
+        'aalu':'आलू','pyaaj':'प्याज','tamaatar':'टमाटर','gobhi':'गोभी',
+        'baigan':'बैंगन','bhindi':'भिंडी','paalak':'पालक','gaajar':'गाजर',
+        'laal':'लाल','neela':'नीला','hara':'हरा','peela':'पीला',
+        'safed':'सफ़ेद','kaala':'काला','gulaabi':'गुलाबी','narangi':'नारंगी',
+        'sir':'सिर','aankh':'आँख','naak':'नाक','kaan':'कान','munh':'मुँह',
+        'daant':'दाँत','baal':'बाल','haath':'हाथ','pair':'पैर',
+        'maa':'माँ','pita':'पिता','daada':'दादा','daadi':'दादी',
+        'bhai':'भाई','bahan':'बहन','chacha':'चाचा','beta':'बेटा','beti':'बेटी',
+        'car':'कार','bus':'बस','train':'ट्रेन','cycle':'साइकिल',
+        'truck':'ट्रक','naav':'नाव','rocket':'रॉकेट',
+        'kitaab':'किताब','pen':'पेन','pencil':'पेंसिल','bag':'बैग',
+        'ped':'पेड़','phool':'फूल','nadi':'नदी','suraj':'सूरज',
+        'chaand':'चाँद','taara':'तारा','baarish':'बारिश','jangal':'जंगल',
+        'roti':'रोटी','chaawal':'चावल','daal':'दाल','doodh':'दूध',
+        'paani':'पानी','chai':'चाय','namak':'नमक','ghee':'घी',
+      };
+      var hindi = map[text] || text;
+      var utt = new SpeechSynthesisUtterance(hindi);
+      utt.lang = 'hi-IN';
+      utt.rate = 0.8;
+      utt.pitch = 1.1;
+      utt.volume = 1.0;
+      var voices = window.speechSynthesis.getVoices();
+      var hiVoice = voices.find(function(v){ return v.lang && v.lang.startsWith('hi'); });
+      if (hiVoice) utt.voice = hiVoice;
+      window.speechSynthesis.speak(utt);
+    };
+    if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+    }
+  </script>
 </head>
 <body>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
-
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

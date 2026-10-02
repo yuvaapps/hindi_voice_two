@@ -36,6 +36,9 @@ class HindiDailyWordsApp extends StatelessWidget {
       ],
       localizationsDelegates: const [
         AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
       home: const HomeScreen(),
     );

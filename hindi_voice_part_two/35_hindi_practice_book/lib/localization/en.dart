@@ -1,7 +1,6 @@
-
 const Map<String, String> enStrings = {
   'app_title': 'Hindi Practice Book',
-  'subtitle': 'Trace, write, match and read workbook',
+  'subtitle': '1000+ words, letters, vowels & sentences practice',
   'start_learning': 'Open Workbook',
   'practice': 'Practice',
   'progress': 'Progress',
@@ -11,5 +10,17 @@ const Map<String, String> enStrings = {
   'sound': 'Sound',
   'reset_progress': 'Reset Progress',
   'about': 'About App',
-  'about_desc': '100% Offline Hindi workbook for kids.',
+  'about_desc': '1300+ Exercises Hindi Handwriting Workbook with Voice.',
+  'clear_canvas': 'Clear',
+  'undo': 'Undo',
+  'guide_lines': 'Ruled Lines',
+  'watermark': 'Trace Watermark',
+  'next': 'Next Practice',
+  'previous': 'Previous',
+  'voice': 'Voice',
+  'categories': 'Categories',
+  'search_hint': 'Search word, letter or meaning...',
+  'congratulations': 'Awesome! Practice Complete!',
+  'pen_color': 'Pen Color',
+  'shuffle': 'Random Practice',
 };

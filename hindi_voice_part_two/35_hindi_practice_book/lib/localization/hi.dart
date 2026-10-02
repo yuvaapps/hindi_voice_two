@@ -1,7 +1,6 @@
-
 const Map<String, String> hiStrings = {
   'app_title': 'हिंदी अभ्यास पुस्तिका',
-  'subtitle': 'ट्रेस, लिखें, मिलाएँ और पढ़ें वर्कबुक',
+  'subtitle': '1000+ शब्द, अक्षर, स्वर, व्यंजन एवं वाक्य अभ्यास',
   'start_learning': 'कार्यपुस्तिका खोलें',
   'practice': 'अभ्यास',
   'progress': 'प्रगति',
@@ -11,5 +10,17 @@ const Map<String, String> hiStrings = {
   'sound': 'ध्वनि',
   'reset_progress': 'प्रगति रीसेट करें',
   'about': 'ऐप के बारे में',
-  'about_desc': '100% ऑफ़लाइन हिंदी अभ्यास पुस्तिका बच्चों के लिए।',
+  'about_desc': '1300+ शब्दों की समृद्ध हिंदी अभ्यास पुस्तिका बच्चों के लिए।',
+  'clear_canvas': 'साफ़ करें',
+  'undo': 'वापस',
+  'guide_lines': 'गाइड रेखाएं',
+  'watermark': 'ट्रेसिंग वाटरमार्क',
+  'next': 'अगला अभ्यास',
+  'previous': 'पिछला अभ्यास',
+  'voice': 'सुनें',
+  'categories': 'श्रेणियाँ',
+  'search_hint': 'अक्षर, शब्द या अर्थ खोजें...',
+  'congratulations': 'शाबाश! अभ्यास पूरा हुआ!',
+  'pen_color': 'कलम का रंग',
+  'shuffle': 'रैंडम अभ्यास',
 };

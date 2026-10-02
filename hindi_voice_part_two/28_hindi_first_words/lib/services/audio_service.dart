@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:js' as js;
 
 class AudioService {
   static final AudioService _instance = AudioService._internal();
@@ -38,13 +40,24 @@ class AudioService {
     });
   }
 
-  Future<void> playAudio(String assetPath) async {
+  Future<void> playWord({
+    required String wordId,
+    required String assetPath,
+    required String text,
+    required String lang,
+  }) async {
+    final success = await playAudio(assetPath);
+    if (!success) {
+      speakText(text, lang);
+    }
+  }
+
+  Future<bool> playAudio(String assetPath) async {
     try {
       if (_player == null) {
         _init();
       }
 
-      // Stop previous audio
       await stopAudio();
 
       _currentAsset = assetPath;
@@ -52,45 +65,81 @@ class AudioService {
       _isPlaying = true;
       isPlayingNotifier.value = true;
 
-      // Clean asset path if it contains assets/ prefix
       String cleanPath = assetPath;
       if (cleanPath.startsWith('assets/')) {
         cleanPath = cleanPath.substring('assets/'.length);
       }
 
       await _player?.play(AssetSource(cleanPath));
-    } catch (e, stackTrace) {
+      return true;
+    } catch (e) {
       debugPrint('AudioService Error playing asset "$assetPath": $e');
-      debugPrint('$stackTrace');
       _isPlaying = false;
       _currentAsset = null;
       isPlayingNotifier.value = false;
       currentAssetNotifier.value = null;
+      return false;
     }
   }
 
-  Future<void> pauseAudio() async {
-    try {
-      await _player?.pause();
-      _isPlaying = false;
-      isPlayingNotifier.value = false;
-    } catch (e) {
-      debugPrint('AudioService Error pausing: $e');
-    }
-  }
+  void speakText(String text, String lang) {
+    if (kIsWeb) {
+      try {
+        final sanitized = text.replaceAll(r'\', r'\\').replaceAll("'", r"\'").replaceAll('"', r'\"');
+        js.context.callMethod('eval', [
+          '''
+          (function() {
+            try {
+              if (window.speechSynthesis) {
+                if (window.speechSynthesis.paused) {
+                  window.speechSynthesis.resume();
+                }
+                window.speechSynthesis.cancel();
+                var u = new SpeechSynthesisUtterance("$sanitized");
+                u.lang = "$lang";
+                u.rate = 0.85;
+                var voices = window.speechSynthesis.getVoices();
+                if (voices && voices.length > 0) {
+                  var targetPrefix = "$lang".substring(0, 2).toLowerCase();
+                  for (var i = 0; i < voices.length; i++) {
+                    if (voices[i].lang.toLowerCase().indexOf(targetPrefix) !== -1) {
+                      u.voice = voices[i];
+                      break;
+                    }
+                  }
+                }
+                window.speechSynthesis.speak(u);
+              }
+            } catch(e) {
+              console.warn("Speech synthesis error", e);
+            }
+          })()
+          '''
+        ]);
 
-  Future<void> resumeAudio() async {
-    try {
-      await _player?.resume();
-      _isPlaying = true;
-      isPlayingNotifier.value = true;
-    } catch (e) {
-      debugPrint('AudioService Error resuming: $e');
+        _isPlaying = true;
+        isPlayingNotifier.value = true;
+        Timer(const Duration(milliseconds: 1400), () {
+          _isPlaying = false;
+          _currentAsset = null;
+          isPlayingNotifier.value = false;
+          currentAssetNotifier.value = null;
+        });
+      } catch (e) {
+        debugPrint('speakText Web error: $e');
+        _isPlaying = false;
+        isPlayingNotifier.value = false;
+      }
     }
   }
 
   Future<void> stopAudio() async {
     try {
+      if (kIsWeb) {
+        js.context.callMethod('eval', [
+          'if (window.speechSynthesis) window.speechSynthesis.cancel();'
+        ]);
+      }
       await _player?.stop();
     } catch (e) {
       debugPrint('AudioService Error stopping: $e');

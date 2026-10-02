@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import '../models/prompt_item.dart';
 import '../services/audio_service.dart';
 import '../services/storage_service.dart';
 
@@ -10,14 +10,23 @@ class AppViewModel extends ChangeNotifier {
   bool _soundEnabled = true;
   Set<String> _completedIds = {};
   int _score = 0;
+  String? _currentPlayingKey;
 
   Locale get locale => _locale;
   bool get soundEnabled => _soundEnabled;
   Set<String> get completedIds => _completedIds;
   int get score => _score;
+  String? get currentPlayingKey => _currentPlayingKey;
+  bool get isAudioPlayingAny => _audioService.isPlaying;
 
   AppViewModel() {
     _load();
+    _audioService.isPlayingNotifier.addListener(() {
+      if (!_audioService.isPlaying) {
+        _currentPlayingKey = null;
+      }
+      notifyListeners();
+    });
   }
 
   Future<void> _load() async {
@@ -53,9 +62,34 @@ class AppViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> playAudio(String path) async {
+  bool isKeyPlaying(String key) {
+    return _soundEnabled &&
+        _audioService.isPlaying &&
+        _currentPlayingKey == key;
+  }
+
+  Future<void> playPrompt(PromptItem item) async {
     if (!_soundEnabled) return;
-    await _audioService.playAudio(path);
+    _currentPlayingKey = item.text;
+    notifyListeners();
+
+    final isEn = _locale.languageCode == 'en';
+    final lang = isEn ? 'en-US' : 'hi-IN';
+    final speechText = isEn && item.english.isNotEmpty ? item.english : item.text;
+
+    await _audioService.playAudio(
+      item.audio,
+      textFallback: speechText,
+      lang: lang,
+    );
+  }
+
+  Future<void> playAudio(String path, {String? textFallback}) async {
+    if (!_soundEnabled) return;
+    _currentPlayingKey = path;
+    notifyListeners();
+    final lang = _locale.languageCode == 'en' ? 'en-US' : 'hi-IN';
+    await _audioService.playAudio(path, textFallback: textFallback, lang: lang);
   }
 
   Future<void> resetProgress() async {

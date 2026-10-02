@@ -6,6 +6,7 @@ class FirstWord {
   final String emoji;
   final String hindiAudio;
   final String englishAudio;
+  final String category;
 
   const FirstWord({
     required this.id,
@@ -14,5 +15,6 @@ class FirstWord {
     required this.emoji,
     required this.hindiAudio,
     required this.englishAudio,
+    this.category = 'general',
   });
 }

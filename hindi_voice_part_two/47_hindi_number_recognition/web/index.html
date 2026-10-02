@@ -1,46 +1,160 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
-
-  <!-- iOS meta tags & icons -->
+  <meta name="description" content="Hindi Number Recognition - Listen and recognize Hindi numbers and 1000+ words with audio and interactive animation.">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="app47_hindi_number_recognition">
+  <meta name="apple-mobile-web-app-title" content="Hindi Number Recognition">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>app47_hindi_number_recognition</title>
+  <title>Hindi Number Recognition | संख्या पहचान</title>
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
+  <script>
+    // ── Hindi 1 to 100 Word Map ────────────────────────────────────────────────
+    const hi1to100Words = [
+      "", "एक", "दो", "तीन", "चार", "पाँच", "छह", "सात", "आठ", "नौ", "दस",
+      "ग्यारह", "बारह", "तेरह", "चौदह", "पंद्रह", "सोलह", "सत्रह", "अठारह", "उन्नीस", "बीस",
+      "इक्कीस", "बाईस", "तेईस", "चौबीस", "पच्चीस", "छब्बीस", "सत्ताईस", "अट्ठाईस", "उनतीस", "तीस",
+      "इकतीस", "बत्तीस", "तैंतीस", "चौंतीस", "पैंतीस", "छत्तीस", "सैंतीस", "अड़तीस", "उनतालीस", "चालीस",
+      "इकतालीस", "बयालीस", "तैंतालीस", "चौवालीस", "पैंतालीस", "छियालीस", "सैंतालीस", "अड़तालीस", "उनचास", "पचास",
+      "इक्यावन", "बावन", "तिरपन", "चौवन", "पचपन", "छप्पन", "सत्तावन", "अट्ठावन", "उनसठ", "साठ",
+      "इकसठ", "बासठ", "तिरसठ", "चौंसठ", "पैंसठ", "छियासठ", "सड़सठ", "अड़सठ", "उनहत्तर", "सत्तर",
+      "इकहत्तर", "बहत्तर", "तिहत्तर", "चौहत्तर", "पचहत्तर", "छिहत्तर", "सतहत्तर", "अठहत्तर", "उनासी", "अस्सी",
+      "इक्यासी", "बयासी", "तिरासी", "चौरासी", "पचासी", "छियासी", "सत्तासी", "अट्ठासी", "नवासी", "नब्बे",
+      "इक्यानवे", "बानवे", "तिरानवे", "चौरानवे", "पंचानवे", "छियानवे", "सत्तानवे", "अट्ठानवे", "निन्यानवे", "सौ"
+    ];
 
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
+    function getHindiNumberWord(n) {
+      if (n >= 1 && n <= 100) return hi1to100Words[n];
+      if (n === 1000) return "एक हज़ार";
+      if (n > 100 && n < 1000) {
+        const h = Math.floor(n / 100);
+        const rem = n % 100;
+        const hiHundreds = ["", "एक सौ", "दो सौ", "तीन सौ", "चार सौ", "पाँच सौ", "छह सौ", "सात सौ", "आठ सौ", "नौ सौ"];
+        if (rem === 0) return hiHundreds[h];
+        return hiHundreds[h] + " " + hi1to100Words[rem];
+      }
+      return String(n);
+    }
+
+    // ── Hindi Vocabulary Map ───────────────────────────────────────────────────
+    const hindiVocab = {
+      // Feedback
+      'feedback_correct': 'सही उत्तर!',
+      'feedback_great': 'बहुत बढ़िया!',
+      'feedback_try': 'फिर से प्रयास करें!',
+
+      // Numbers 1-10
+      'ek':'एक', 'do':'दो', 'teen':'तीन', 'chaar':'चार', 'paanch':'पाँच',
+      'chhah':'छह', 'saat':'सात', 'aath':'आठ', 'nau':'नौ', 'das':'दस',
+
+      // Animals
+      'kutta':'कुत्ता', 'billi':'बिल्ली', 'gaay':'गाय', 'ghoda':'घोड़ा',
+      'haathi':'हाथी', 'sher':'शेर', 'bandar':'बंदर', 'hiran':'हिरण',
+      'khargosh':'खरगोश', 'bhaloo':'भालू', 'tota':'तोता', 'machhli':'मछली',
+      'titli':'तितली', 'chidiya':'चिड़िया', 'magar':'मगरमच्छ', 'baagh':'बाघ',
+
+      // Fruits
+      'seb':'सेब', 'kela':'केला', 'aam':'आम', 'angoor':'अंगूर',
+      'santara':'संतरा', 'ananas':'अनानास', 'tarbooj':'तरबूज',
+      'papeeta':'पपीता', 'anaar':'अनार', 'phal':'फल',
+
+      // Vegetables
+      'matar':'मटर', 'aalu':'आलू', 'pyaaj':'प्याज', 'tamaatar':'टमाटर',
+      'gobhi':'गोभी', 'baigan':'बैंगन', 'bhindi':'भिंडी', 'paalak':'पालक',
+      'gaajar':'गाजर', 'lauki':'लौकी',
+
+      // Nature & World
+      'ped':'पेड़', 'phool':'फूल', 'kamal':'कमल', 'nadi':'नदी',
+      'suraj':'सूरज', 'chand':'चाँद', 'taare':'तारे', 'baadal':'बादल',
+      'baarish':'बारिश', 'bagicha':'बगीचा',
+
+      // Body Parts
+      'sir':'सिर', 'aankh':'आँख', 'naak':'नाक', 'kaan':'कान',
+      'munh':'मुँह', 'daant':'दाँत', 'baal':'बाल', 'haath':'हाथ',
+      'ungli':'उँगली', 'pair':'पैर',
+
+      // Family & People
+      'maa':'माँ', 'papa':'पिता', 'dada':'दादा', 'dadi':'दादी',
+      'bhai':'भाई', 'behen':'बहन', 'bachha':'बच्चा',
+
+      // Transport
+      'bus':'बस', 'railgaadi':'रेलगाड़ी', 'vimaan':'विमान', 'naav':'नाव',
+      'cycle':'साइकिल', 'gaadi':'गाड़ी', 'sadak':'सड़क', 'baazaar':'बाज़ार',
+
+      // School
+      'kitaab':'किताब', 'kalam':'कलम', 'pencil':'पेंसिल', 'rubber':'रबड़',
+      'basta':'बस्ता', 'school':'स्कूल', 'ghadi':'घड़ी', 'mez':'मेज़',
+      'kursi':'कुर्सी', 'khat':'खत', 'chashma':'चश्मा',
+
+      // Food & Household
+      'khaana':'खाना', 'doodh':'दूध', 'paani':'पानी', 'jal':'जल',
+      'shehad':'शहद', 'kap':'कप', 'katori':'कटोरी', 'gilaas':'गिलास',
+      'chammach':'चम्मच', 'thaali':'थाली', 'jag':'जग',
+
+      // Misc
+      'chamak':'चमक', 'ghar':'घर', 'darwaza':'दरवाज़ा', 'khidki':'खिड़की',
+      'pankha':'पंखा', 'gend':'गेंद', 'chhatri':'छतरी', 'joota':'जूता'
+    };
+
+    function speakHindi(key) {
+      let text = hindiVocab[key];
+      if (!text) {
+        if (typeof key === 'number') {
+          text = getHindiNumberWord(key);
+        } else if (typeof key === 'string') {
+          if (key.startsWith('num_')) {
+            const num = parseInt(key.replace('num_', ''), 10);
+            if (!isNaN(num)) text = getHindiNumberWord(num);
+          } else {
+            const num = parseInt(key, 10);
+            if (!isNaN(num) && String(num) === key.trim()) {
+              text = getHindiNumberWord(num);
+            } else {
+              text = key;
+            }
+          }
+        }
+      }
+      _speak(text || key, 'hi-IN');
+    }
+
+    function stopSpeech() {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    function _speak(text, lang) {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = lang || 'hi-IN';
+      utter.rate = 0.85;
+      utter.pitch = 1.0;
+      utter.volume = 1.0;
+
+      const voices = window.speechSynthesis.getVoices();
+      const hiVoice = voices.find(v =>
+        v.lang.startsWith('hi') || v.name.toLowerCase().includes('hindi')
+      );
+      if (hiVoice) utter.voice = hiVoice;
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    if (window.speechSynthesis) {
+      window.speechSynthesis.onvoiceschanged = function() {
+        window.speechSynthesis.getVoices();
+      };
+      window.speechSynthesis.getVoices();
+    }
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

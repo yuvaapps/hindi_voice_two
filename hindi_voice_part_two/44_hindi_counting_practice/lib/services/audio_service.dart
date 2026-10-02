@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:js' as js;
 
 class AudioService {
   static final AudioService _instance = AudioService._internal();
@@ -20,31 +22,27 @@ class AudioService {
   String? get currentAsset => _currentAsset;
 
   void _init() {
-    _player = AudioPlayer();
-    _player?.onPlayerStateChanged.listen((state) {
-      _isPlaying = (state == PlayerState.playing);
-      isPlayingNotifier.value = _isPlaying;
-      if (!_isPlaying) {
+    if (!kIsWeb) {
+      _player = AudioPlayer();
+      _player?.onPlayerStateChanged.listen((state) {
+        _isPlaying = (state == PlayerState.playing);
+        isPlayingNotifier.value = _isPlaying;
+        if (!_isPlaying) {
+          _currentAsset = null;
+          currentAssetNotifier.value = null;
+        }
+      });
+      _player?.onPlayerComplete.listen((_) {
+        _isPlaying = false;
         _currentAsset = null;
+        isPlayingNotifier.value = false;
         currentAssetNotifier.value = null;
-      }
-    });
-
-    _player?.onPlayerComplete.listen((_) {
-      _isPlaying = false;
-      _currentAsset = null;
-      isPlayingNotifier.value = false;
-      currentAssetNotifier.value = null;
-    });
+      });
+    }
   }
 
   Future<void> playAudio(String assetPath) async {
     try {
-      if (_player == null) {
-        _init();
-      }
-
-      // Stop previous audio
       await stopAudio();
 
       _currentAsset = assetPath;
@@ -52,13 +50,25 @@ class AudioService {
       _isPlaying = true;
       isPlayingNotifier.value = true;
 
-      // Clean asset path if it contains assets/ prefix
-      String cleanPath = assetPath;
-      if (cleanPath.startsWith('assets/')) {
-        cleanPath = cleanPath.substring('assets/'.length);
+      if (kIsWeb) {
+        // Extract Hindi word from asset path for TTS
+        final word = _extractWordFromPath(assetPath);
+        _speakWeb(word);
+        // Simulate end after 1.5 seconds
+        Future.delayed(const Duration(milliseconds: 1500), () {
+          _isPlaying = false;
+          _currentAsset = null;
+          isPlayingNotifier.value = false;
+          currentAssetNotifier.value = null;
+        });
+      } else {
+        if (_player == null) _init();
+        String cleanPath = assetPath;
+        if (cleanPath.startsWith('assets/')) {
+          cleanPath = cleanPath.substring('assets/'.length);
+        }
+        await _player?.play(AssetSource(cleanPath));
       }
-
-      await _player?.play(AssetSource(cleanPath));
     } catch (e, stackTrace) {
       debugPrint('AudioService Error playing asset "$assetPath": $e');
       debugPrint('$stackTrace');
@@ -66,6 +76,39 @@ class AudioService {
       _currentAsset = null;
       isPlayingNotifier.value = false;
       currentAssetNotifier.value = null;
+    }
+  }
+
+  /// Speak a Hindi word using the browser's SpeechSynthesis API via window.speakHindi
+  void _speakWeb(String text) {
+    try {
+      js.context.callMethod('speakHindi', [text]);
+    } catch (e) {
+      debugPrint('Web TTS fallback failed: $e');
+    }
+  }
+
+  /// Extract the roman/hindi keyword from asset path
+  String _extractWordFromPath(String assetPath) {
+    final fileName = assetPath.split('/').last.replaceAll('.mp3', '');
+    return fileName;
+  }
+
+  Future<void> speakText(String hindiText) async {
+    try {
+      _isPlaying = true;
+      isPlayingNotifier.value = true;
+      if (kIsWeb) {
+        _speakWeb(hindiText);
+        Future.delayed(const Duration(milliseconds: 1500), () {
+          _isPlaying = false;
+          isPlayingNotifier.value = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('AudioService TTS error: $e');
+      _isPlaying = false;
+      isPlayingNotifier.value = false;
     }
   }
 

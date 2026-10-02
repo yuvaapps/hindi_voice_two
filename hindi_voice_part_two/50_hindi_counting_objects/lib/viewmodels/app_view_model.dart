@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import '../data/app_data.dart';
 import '../services/audio_service.dart';
 import '../services/storage_service.dart';
 
@@ -10,11 +10,16 @@ class AppViewModel extends ChangeNotifier {
   bool _soundEnabled = true;
   Set<String> _completedIds = {};
   int _score = 0;
+  int _streak = 1;
+  int _selectedCategoryIndex = 0;
 
   Locale get locale => _locale;
   bool get soundEnabled => _soundEnabled;
   Set<String> get completedIds => _completedIds;
   int get score => _score;
+  int get streak => _streak;
+  int get selectedCategoryIndex => _selectedCategoryIndex;
+  AudioService get audioService => _audioService;
 
   AppViewModel() {
     _load();
@@ -26,6 +31,7 @@ class AppViewModel extends ChangeNotifier {
     _soundEnabled = StorageService.getSoundEnabled();
     _completedIds = StorageService.getCompletedItems().toSet();
     _score = StorageService.getScore();
+    _streak = _completedIds.isEmpty ? 1 : (_completedIds.length ~/ 5) + 1;
     notifyListeners();
   }
 
@@ -43,25 +49,54 @@ class AppViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> markCompleted(int n) async {
-    final id = '$n';
-    if (!_completedIds.contains(id)) {
-      _completedIds.add(id);
+  void setCategory(int index) {
+    if (index >= 0 && index < AppData.categoryNames.length) {
+      _selectedCategoryIndex = index;
+      notifyListeners();
+    }
+  }
+
+  bool isCompleted(int id) => _completedIds.contains('$id');
+
+  int getCategoryCompletionCount(int catIndex) {
+    final catItems = AppData.getCategory(catIndex);
+    return catItems.where((item) => _completedIds.contains('${item.id}')).length;
+  }
+
+  Future<void> markCompleted(int id) async {
+    final idStr = '$id';
+    if (!_completedIds.contains(idStr)) {
+      _completedIds.add(idStr);
       await StorageService.setCompletedItems(_completedIds.toList());
       _score += 15;
+      _streak = (_completedIds.length ~/ 5) + 1;
       await StorageService.setScore(_score);
       notifyListeners();
     }
   }
 
-  Future<void> playAudio(String path) async {
+  Future<void> playAudio(String path, {String? textFallback}) async {
     if (!_soundEnabled) return;
-    await _audioService.playAudio(path);
+    await _audioService.playAudio(path, textFallback: textFallback);
+  }
+
+  Future<void> speakWord(String text) async {
+    if (!_soundEnabled) return;
+    await _audioService.speakWord(text);
+  }
+
+  Future<void> speakCount(int count) async {
+    if (!_soundEnabled) return;
+    await _audioService.playAudio(
+      'assets/audio/hi/num_$count.mp3',
+      textFallback: '$count',
+    );
   }
 
   Future<void> resetProgress() async {
     _completedIds.clear();
     _score = 0;
+    _streak = 1;
     await StorageService.setCompletedItems([]);
     await StorageService.setScore(0);
     notifyListeners();

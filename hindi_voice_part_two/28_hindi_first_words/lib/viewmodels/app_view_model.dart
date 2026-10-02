@@ -60,12 +60,25 @@ class AppViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> addScore(int amount) async {
+    _score += amount;
+    await StorageService.setScore(_score);
+    notifyListeners();
+  }
+
   Future<void> playWordAudio(FirstWord word) async {
     if (!_soundEnabled) return;
     _currentPlayingId = word.id;
     notifyListeners();
     final audio = _locale.languageCode == 'en' ? word.englishAudio : word.hindiAudio;
-    await _audioService.playAudio(audio);
+    final text = _locale.languageCode == 'en' ? word.english : word.hindi;
+    final lang = _locale.languageCode == 'en' ? 'en-US' : 'hi-IN';
+    await _audioService.playWord(
+      wordId: word.id,
+      assetPath: audio,
+      text: text,
+      lang: lang,
+    );
   }
 
   Future<void> playCustomAudio(String path) async {

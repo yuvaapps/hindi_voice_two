@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color primaryColor = Color(0xFFFF6F00); // Vibrant Amber / Orange
-  static const Color primaryLight = Color(0xFFFFECB3);
-  static const Color secondaryColor = Color(0xFF00B0FF); // Sky Blue
-  static const Color accentColor = Color(0xFF00E676); // Lime Green
+  // Radiant Sunny Yellow Palette
+  static const Color primaryColor = Color(0xFFF59E0B); // Vibrant Sun Gold / Amber Yellow
+  static const Color primaryLight = Color(0xFFFFF9C4); // Cream Pastel Yellow
+  static const Color secondaryColor = Color(0xFFFBBF24); // Radiant Sunshine Yellow
+  static const Color accentColor = Color(0xFF00E676); // Mint Green (for completions & successes)
   static const Color cardBg = Color(0xFFFFFFFF);
-  static const Color scaffoldBg = Color(0xFFFFF8E7); // Warm cream
-  static const Color textColor = Color(0xFF263238);
-  static const Color subtitleColor = Color(0xFF546E7A);
+  static const Color scaffoldBg = Color(0xFFFFFDE7); // Warm light sunshine yellow background
+  static const Color textColor = Color(0xFF3E2723); // Deep warm espresso charcoal for high contrast
+  static const Color subtitleColor = Color(0xFF795548); // Warm honey slate
 
   static const LinearGradient headerGradient = LinearGradient(
-    colors: [Color(0xFFFF9100), Color(0xFFFF5722)],
+    colors: [Color(0xFFFBBF24), Color(0xFFD97706)], // Warm sunburst golden yellow gradient
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   static const LinearGradient cardGradient = LinearGradient(
-    colors: [Color(0xFFFFF3E0), Color(0xFFFFE0B2)],
+    colors: [Color(0xFFFFFDE7), Color(0xFFFFF9C4)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -34,6 +35,11 @@ class AppTheme {
       ),
       scaffoldBackgroundColor: scaffoldBg,
       textTheme: GoogleFonts.notoSansDevanagariTextTheme(),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: primaryColor,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
       cardTheme: CardThemeData(
         elevation: 3,
         shape: RoundedRectangleBorder(
@@ -43,6 +49,8 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
           elevation: 2,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(

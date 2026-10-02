@@ -41,6 +41,30 @@
     For more details:
     * https://docs.flutter.dev/platform-integration/web/initialization
   -->
+  <script>
+    window.speakHindi = function(text, lang) {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = lang || 'hi-IN';
+      u.rate = 0.88;
+      u.pitch = 1.0;
+      var voices = window.speechSynthesis.getVoices();
+      var hindiVoice = voices.find(function(v) {
+        return v.lang === 'hi-IN' || v.lang.startsWith('hi');
+      });
+      if (hindiVoice) {
+        u.voice = hindiVoice;
+      }
+      window.speechSynthesis.speak(u);
+    };
+
+    if (window.speechSynthesis) {
+      window.speechSynthesis.onvoiceschanged = function() {
+        window.speechSynthesis.getVoices();
+      };
+    }
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

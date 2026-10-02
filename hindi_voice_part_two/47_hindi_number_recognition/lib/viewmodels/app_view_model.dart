@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../services/audio_service.dart';
 import '../services/storage_service.dart';
@@ -10,11 +9,22 @@ class AppViewModel extends ChangeNotifier {
   bool _soundEnabled = true;
   Set<String> _completedIds = {};
   int _score = 0;
+  int _streak = 0;
+  int _bestStreak = 0;
+  int _totalAttempts = 0;
+  int _correctAttempts = 0;
 
   Locale get locale => _locale;
   bool get soundEnabled => _soundEnabled;
   Set<String> get completedIds => _completedIds;
   int get score => _score;
+  int get streak => _streak;
+  int get bestStreak => _bestStreak;
+  int get totalAttempts => _totalAttempts;
+  int get correctAttempts => _correctAttempts;
+
+  double get accuracyRate =>
+      _totalAttempts > 0 ? (_correctAttempts / _totalAttempts) * 100 : 100.0;
 
   AppViewModel() {
     _load();
@@ -43,25 +53,48 @@ class AppViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> markCompleted(int n) async {
-    final id = '$n';
-    if (!_completedIds.contains(id)) {
-      _completedIds.add(id);
-      await StorageService.setCompletedItems(_completedIds.toList());
-      _score += 15;
+  Future<void> recordAttempt({required int number, required bool isCorrect}) async {
+    _totalAttempts++;
+    if (isCorrect) {
+      _correctAttempts++;
+      _streak++;
+      if (_streak > _bestStreak) _bestStreak = _streak;
+
+      final id = '$number';
+      final isFirstTime = !_completedIds.contains(id);
+      if (isFirstTime) {
+        _completedIds.add(id);
+        await StorageService.setCompletedItems(_completedIds.toList());
+      }
+      _score += 15 + (_streak > 3 ? 5 : 0);
       await StorageService.setScore(_score);
-      notifyListeners();
+    } else {
+      _streak = 0;
     }
+    notifyListeners();
   }
 
-  Future<void> playAudio(String path) async {
+  Future<void> markCompleted(int n) async {
+    await recordAttempt(number: n, isCorrect: true);
+  }
+
+  Future<void> playAudio(String path, {String? textFallback}) async {
     if (!_soundEnabled) return;
-    await _audioService.playAudio(path);
+    await _audioService.playAudio(path, textFallback: textFallback);
+  }
+
+  Future<void> speakWord(String text) async {
+    if (!_soundEnabled) return;
+    await _audioService.speakWord(text);
   }
 
   Future<void> resetProgress() async {
     _completedIds.clear();
     _score = 0;
+    _streak = 0;
+    _bestStreak = 0;
+    _totalAttempts = 0;
+    _correctAttempts = 0;
     await StorageService.setCompletedItems([]);
     await StorageService.setScore(0);
     notifyListeners();

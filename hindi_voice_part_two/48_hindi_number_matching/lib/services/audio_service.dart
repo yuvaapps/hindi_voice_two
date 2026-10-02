@@ -1,20 +1,23 @@
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:js' as js;
 
 class AudioService {
   static final AudioService _instance = AudioService._internal();
   factory AudioService() => _instance;
 
   AudioService._internal() {
-    _init();
+    if (!kIsWeb) _init();
   }
 
   AudioPlayer? _player;
   bool _isPlaying = false;
   String? _currentAsset;
   final ValueNotifier<bool> isPlayingNotifier = ValueNotifier<bool>(false);
-  final ValueNotifier<String?> currentAssetNotifier = ValueNotifier<String?>(null);
+  final ValueNotifier<String?> currentAssetNotifier =
+      ValueNotifier<String?>(null);
 
   bool get isPlaying => _isPlaying;
   String? get currentAsset => _currentAsset;
@@ -29,7 +32,6 @@ class AudioService {
         currentAssetNotifier.value = null;
       }
     });
-
     _player?.onPlayerComplete.listen((_) {
       _isPlaying = false;
       _currentAsset = null;
@@ -38,13 +40,8 @@ class AudioService {
     });
   }
 
-  Future<void> playAudio(String assetPath) async {
+  Future<void> playAudio(String assetPath, {String? textFallback}) async {
     try {
-      if (_player == null) {
-        _init();
-      }
-
-      // Stop previous audio
       await stopAudio();
 
       _currentAsset = assetPath;
@@ -52,16 +49,32 @@ class AudioService {
       _isPlaying = true;
       isPlayingNotifier.value = true;
 
-      // Clean asset path if it contains assets/ prefix
-      String cleanPath = assetPath;
-      if (cleanPath.startsWith('assets/')) {
-        cleanPath = cleanPath.substring('assets/'.length);
-      }
+      if (kIsWeb) {
+        final fileName = assetPath.split('/').last.replaceAll('.mp3', '');
+        final toSpeak = textFallback ?? fileName;
 
-      await _player?.play(AssetSource(cleanPath));
-    } catch (e, stackTrace) {
-      debugPrint('AudioService Error playing asset "$assetPath": $e');
-      debugPrint('$stackTrace');
+        try {
+          js.context.callMethod('speakHindi', [toSpeak]);
+        } catch (e) {
+          debugPrint('Web TTS speakHindi failed: $e');
+        }
+
+        // Live soundwave simulation duration
+        await Future.delayed(const Duration(milliseconds: 1600));
+        _isPlaying = false;
+        isPlayingNotifier.value = false;
+        _currentAsset = null;
+        currentAssetNotifier.value = null;
+      } else {
+        if (_player == null) _init();
+        String cleanPath = assetPath;
+        if (cleanPath.startsWith('assets/')) {
+          cleanPath = cleanPath.substring('assets/'.length);
+        }
+        await _player?.play(AssetSource(cleanPath));
+      }
+    } catch (e) {
+      debugPrint('AudioService Error: $e');
       _isPlaying = false;
       _currentAsset = null;
       isPlayingNotifier.value = false;
@@ -69,36 +82,59 @@ class AudioService {
     }
   }
 
-  Future<void> pauseAudio() async {
+  Future<void> speakWord(String text) async {
     try {
-      await _player?.pause();
-      _isPlaying = false;
-      isPlayingNotifier.value = false;
-    } catch (e) {
-      debugPrint('AudioService Error pausing: $e');
-    }
-  }
-
-  Future<void> resumeAudio() async {
-    try {
-      await _player?.resume();
+      await stopAudio();
       _isPlaying = true;
       isPlayingNotifier.value = true;
-    } catch (e) {
-      debugPrint('AudioService Error resuming: $e');
+
+      if (kIsWeb) {
+        try {
+          js.context.callMethod('speakHindi', [text]);
+        } catch (_) {}
+        await Future.delayed(const Duration(milliseconds: 1600));
+        _isPlaying = false;
+        isPlayingNotifier.value = false;
+      }
+    } catch (_) {
+      _isPlaying = false;
+      isPlayingNotifier.value = false;
     }
   }
 
   Future<void> stopAudio() async {
     try {
-      await _player?.stop();
-    } catch (e) {
-      debugPrint('AudioService Error stopping: $e');
-    } finally {
+      if (!kIsWeb) {
+        await _player?.stop();
+      } else {
+        try {
+          js.context.callMethod('stopSpeech');
+        } catch (_) {}
+      }
+    } catch (_) {}
+    _isPlaying = false;
+    _currentAsset = null;
+    isPlayingNotifier.value = false;
+    currentAssetNotifier.value = null;
+  }
+
+  Future<void> pauseAudio() async {
+    try {
+      if (!kIsWeb) await _player?.pause();
       _isPlaying = false;
-      _currentAsset = null;
       isPlayingNotifier.value = false;
-      currentAssetNotifier.value = null;
+    } catch (e) {
+      debugPrint('AudioService pause error: $e');
+    }
+  }
+
+  Future<void> resumeAudio() async {
+    try {
+      if (!kIsWeb) await _player?.resume();
+      _isPlaying = true;
+      isPlayingNotifier.value = true;
+    } catch (e) {
+      debugPrint('AudioService resume error: $e');
     }
   }
 

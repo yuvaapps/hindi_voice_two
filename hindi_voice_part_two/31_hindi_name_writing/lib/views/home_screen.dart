@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../data/app_data.dart';
 import '../localization/app_localizations.dart';
+import '../utils/animation_utils.dart';
 import '../utils/app_theme.dart';
 import '../viewmodels/app_view_model.dart';
 import 'learning_screen.dart';
@@ -31,26 +33,53 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
 
     return Scaffold(
+      backgroundColor: AppTheme.scaffoldBg,
       appBar: AppBar(
-        title: Text(loc.translate('app_title'), style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(
+          loc.translate('app_title'),
+          style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5),
+        ),
         backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.white,
-        elevation: 1,
+        elevation: 0,
         actions: [
-          TextButton.icon(
-            onPressed: vm.toggleLanguage,
-            icon: const Icon(Icons.language, color: Colors.white, size: 18),
-            label: Text(
-              vm.locale.languageCode == 'hi' ? 'हिन्दी' : 'English',
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+          BouncingWidget(
+            onTap: vm.toggleLanguage,
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.language_rounded, color: Colors.white, size: 16),
+                  const SizedBox(width: 4),
+                  Text(
+                    vm.locale.languageCode == 'hi' ? 'हिन्दी' : 'English',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
+                ],
+              ),
             ),
           ),
-          IconButton(
-            onPressed: vm.toggleSound,
-            icon: Icon(vm.soundEnabled ? Icons.volume_up : Icons.volume_off, color: Colors.white),
-            tooltip: vm.soundEnabled ? 'Mute' : 'Unmute',
+          BouncingWidget(
+            onTap: vm.toggleSound,
+            child: Container(
+              margin: const EdgeInsets.only(right: 12),
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                vm.soundEnabled ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
           ),
-          const SizedBox(width: 4),
         ],
       ),
       body: SafeArea(
@@ -66,22 +95,22 @@ class _HomeScreenState extends State<HomeScreen> {
         destinations: [
           NavigationDestination(
             icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home),
+            selectedIcon: const Icon(Icons.home_rounded),
             label: loc.translate('home'),
           ),
           NavigationDestination(
             icon: const Icon(Icons.menu_book_outlined),
-            selectedIcon: const Icon(Icons.menu_book),
+            selectedIcon: const Icon(Icons.menu_book_rounded),
             label: loc.translate('learn'),
           ),
           NavigationDestination(
             icon: const Icon(Icons.edit_note_outlined),
-            selectedIcon: const Icon(Icons.edit_note),
+            selectedIcon: const Icon(Icons.edit_note_rounded),
             label: loc.translate('practice'),
           ),
           NavigationDestination(
             icon: const Icon(Icons.settings_outlined),
-            selectedIcon: const Icon(Icons.settings),
+            selectedIcon: const Icon(Icons.settings_rounded),
             label: loc.translate('settings'),
           ),
         ],
@@ -97,86 +126,145 @@ class _HomeTabContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
+    final vm = context.watch<AppViewModel>();
+    final totalNames = AppData.names.length;
+    final doneCount = vm.completedIds.length;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppTheme.primaryColor, AppTheme.primaryColor.withOpacity(0.85)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.primaryColor.withOpacity(0.3),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        loc.translate('app_title'),
-                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        loc.translate('subtitle'),
-                        style: const TextStyle(fontSize: 14, color: Colors.white70),
-                      ),
-                    ],
+          // Cyan Oceanic Hero Banner
+          StaggeredEntrance(
+            index: 0,
+            child: Container(
+              padding: const EdgeInsets.all(22),
+              decoration: BoxDecoration(
+                gradient: AppTheme.headerGradient,
+                borderRadius: BorderRadius.circular(26),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primaryColor.withOpacity(0.35),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
                   ),
-                ),
-                const Text('✍️', style: TextStyle(fontSize: 48)),
-              ],
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          loc.translate('app_title'),
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          loc.translate('subtitle'),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white.withOpacity(0.9),
+                            height: 1.3,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.22),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '✍️ $doneCount / $totalNames Names Mastered • ⭐ ${vm.score}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const FloatingAnimation(
+                    offset: 6.0,
+                    duration: Duration(milliseconds: 2000),
+                    child: Text('🖋️', style: TextStyle(fontSize: 60)),
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 20),
+
+          const SizedBox(height: 22),
+
+          // Menu Navigation Cards
           GridView.count(
             crossAxisCount: 2,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             mainAxisSpacing: 14,
             crossAxisSpacing: 14,
+            childAspectRatio: 1.05,
             children: [
-              _HomeNavCard(
-                title: loc.translate('start_learning'),
-                emoji: '📛',
-                color: Colors.amber.shade50,
-                borderColor: Colors.amber.shade200,
-                onTap: () => onTabSelected(1),
+              StaggeredEntrance(
+                index: 1,
+                child: _HomeNavCard(
+                  title: loc.translate('start_learning'),
+                  emoji: '📛',
+                  subtitle: '$totalNames names',
+                  bgColor: const Color(0xFFE0F7FA),
+                  borderColor: const Color(0xFF80DEEA),
+                  textColor: const Color(0xFF006064),
+                  onTap: () => onTabSelected(1),
+                ),
               ),
-              _HomeNavCard(
-                title: loc.translate('practice'),
-                emoji: '📝',
-                color: Colors.cyan.shade50,
-                borderColor: Colors.cyan.shade200,
-                onTap: () => onTabSelected(2),
+              StaggeredEntrance(
+                index: 2,
+                child: _HomeNavCard(
+                  title: loc.translate('practice'),
+                  emoji: '📝',
+                  subtitle: 'Calligraphy Slate',
+                  bgColor: const Color(0xFFE1F5FE),
+                  borderColor: const Color(0xFF81D4FA),
+                  textColor: const Color(0xFF01579B),
+                  onTap: () => onTabSelected(2),
+                ),
               ),
-              _HomeNavCard(
-                title: loc.translate('progress'),
-                emoji: '🌟',
-                color: Colors.green.shade50,
-                borderColor: Colors.green.shade200,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProgressScreen())),
+              StaggeredEntrance(
+                index: 3,
+                child: _HomeNavCard(
+                  title: loc.translate('progress'),
+                  emoji: '🌟',
+                  subtitle: '$doneCount / $totalNames done',
+                  bgColor: const Color(0xFFE8F5E9),
+                  borderColor: const Color(0xFFA5D6A7),
+                  textColor: const Color(0xFF1B5E20),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ProgressScreen()),
+                  ),
+                ),
               ),
-              _HomeNavCard(
-                title: loc.translate('settings'),
-                emoji: '⚙️',
-                color: Colors.purple.shade50,
-                borderColor: Colors.purple.shade200,
-                onTap: () => onTabSelected(3),
+              StaggeredEntrance(
+                index: 4,
+                child: _HomeNavCard(
+                  title: loc.translate('settings'),
+                  emoji: '⚙️',
+                  subtitle: 'Preferences',
+                  bgColor: const Color(0xFFEDE7F6),
+                  borderColor: const Color(0xFFD1C4E9),
+                  textColor: const Color(0xFF4A148C),
+                  onTap: () => onTabSelected(3),
+                ),
               ),
             ],
           ),
@@ -189,41 +277,58 @@ class _HomeTabContent extends StatelessWidget {
 class _HomeNavCard extends StatelessWidget {
   final String title;
   final String emoji;
-  final Color color;
+  final String subtitle;
+  final Color bgColor;
   final Color borderColor;
+  final Color textColor;
   final VoidCallback onTap;
 
   const _HomeNavCard({
     required this.title,
     required this.emoji,
-    required this.color,
+    required this.subtitle,
+    required this.bgColor,
     required this.borderColor,
+    required this.textColor,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return BouncingWidget(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(22),
       child: Container(
         decoration: BoxDecoration(
-          color: color,
+          color: bgColor,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(color: borderColor, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: borderColor.withOpacity(0.25),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 42)),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              ),
+            FloatingAnimation(
+              offset: 3.0,
+              duration: const Duration(milliseconds: 2200),
+              child: Text(emoji, style: const TextStyle(fontSize: 42)),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: textColor),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: textColor.withOpacity(0.75)),
             ),
           ],
         ),

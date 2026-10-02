@@ -86,7 +86,19 @@ class AppViewModel extends ChangeNotifier {
     _currentPlayingId = word.id;
     notifyListeners();
     final audio = _locale.languageCode == 'en' ? word.englishAudio : word.hindiAudio;
-    await _audioService.playAudio(audio);
+    final text = _locale.languageCode == 'en' ? word.english : word.hindi;
+    final lang = _locale.languageCode == 'en' ? 'en-US' : 'hi-IN';
+    await _audioService.playWord(
+      wordId: word.id,
+      assetPath: audio,
+      text: text,
+      lang: lang,
+    );
+  }
+
+  Future<void> playLetterAudio(String letter) async {
+    if (!_soundEnabled) return;
+    _audioService.speakText(letter, 'hi-IN');
   }
 
   Future<void> playCustomAudio(String path) async {

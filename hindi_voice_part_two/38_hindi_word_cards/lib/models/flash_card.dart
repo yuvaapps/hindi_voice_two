@@ -1,4 +1,3 @@
-
 class FlashCard {
   final String id;
   final String hindi;
@@ -6,5 +5,15 @@ class FlashCard {
   final String emoji;
   final String hindiAudio;
   final String englishAudio;
-  const FlashCard(this.id, this.hindi, this.english, this.emoji, this.hindiAudio, this.englishAudio);
+  final String category;
+
+  const FlashCard(
+    this.id,
+    this.hindi,
+    this.english,
+    this.emoji,
+    this.hindiAudio,
+    this.englishAudio, [
+    this.category = 'general',
+  ]);
 }

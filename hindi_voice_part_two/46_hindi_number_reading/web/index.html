@@ -1,46 +1,159 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
-
-  <!-- iOS meta tags & icons -->
+  <meta name="description" content="Hindi Number Reading - Learn Hindi numbers 1-100 and 1000+ vocabulary words with audio.">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="app46_hindi_number_reading">
+  <meta name="apple-mobile-web-app-title" content="Hindi Number Reading">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>app46_hindi_number_reading</title>
+  <title>Hindi Number Reading | संख्या पढ़ाई</title>
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
+  <script>
+    // ── Hindi TTS vocabulary map ──────────────────────────────────────────────
+    const hindiVocab = {
+      // Numbers 1-100
+      'ek':'एक', 'do':'दो', 'teen':'तीन', 'chaar':'चार', 'paanch':'पाँच',
+      'chhah':'छह', 'saat':'सात', 'aath':'आठ', 'nau':'नौ', 'das':'दस',
+      'gyaarah':'ग्यारह', 'baarah':'बारह', 'terah':'तेरह', 'chaudah':'चौदह',
+      'pandrah':'पंद्रह', 'solah':'सोलह', 'satrah':'सत्रह', 'attharah':'अठारह',
+      'unnees':'उन्नीस', 'bees':'बीस', 'ikkees':'इक्कीस', 'baais':'बाईस',
+      'teis':'तेईस', 'chaubbees':'चौबीस', 'pachchees':'पच्चीस',
+      'chhabbees':'छब्बीस', 'sattaees':'सत्ताईस', 'atthaees':'अट्ठाईस',
+      'unnattees':'उनतीस', 'tees':'तीस', 'iktees':'इकतीस', 'battees':'बत्तीस',
+      'taintees':'तैंतीस', 'chauntees':'चौंतीस', 'paintees':'पैंतीस',
+      'chhattees':'छत्तीस', 'sainttees':'सैंतीस', 'artees':'अड़तीस',
+      'untaalees':'उनतालीस', 'chaalees':'चालीस', 'iktaalees':'इकतालीस',
+      'bayaalees':'बयालीस', 'tantaalees':'तैंतालीस', 'chauvaalees':'चौवालीस',
+      'paintaalees':'पैंतालीस', 'chhiyaalees':'छियालीस', 'saintaalees':'सैंतालीस',
+      'artaalees':'अड़तालीस', 'unchaas':'उनचास', 'pachaas':'पचास',
+      'ikyaavan':'इक्यावन', 'baavan':'बावन', 'tirpan':'तिरपन',
+      'chauvan':'चौवन', 'pachpan':'पचपन', 'chhappan':'छप्पन',
+      'sattaavan':'सत्तावन', 'atthaavan':'अट्ठावन', 'unsath':'उनसठ',
+      'saath':'साठ', 'iksath':'इकसठ', 'baasath':'बासठ', 'tirsath':'तिरसठ',
+      'chausath':'चौंसठ', 'painsath':'पैंसठ', 'chhiyasath':'छियासठ',
+      'sarsath':'सड़सठ', 'arsath':'अड़सठ', 'unhattar':'उनहत्तर',
+      'sattar':'सत्तर', 'ikahattar':'इकहत्तर', 'bahattar':'बहत्तर',
+      'tihattar':'तिहत्तर', 'chauhattar':'चौहत्तर', 'pachattar':'पचहत्तर',
+      'chhihattar':'छिहत्तर', 'satattar':'सतहत्तर', 'atthattar':'अठहत्तर',
+      'unnaasi':'उनासी', 'assi':'अस्सी', 'ikyaasi':'इक्यासी',
+      'bayaasi':'बयासी', 'tiraasi':'तिरासी', 'chauraasi':'चौरासी',
+      'pachaasi':'पचासी', 'chhiyaasi':'छियासी', 'sattaasi':'सत्तासी',
+      'atthaasi':'अट्ठासी', 'navaasi':'नवासी', 'nabbe':'नब्बे',
+      'ikyaanave':'इक्यानवे', 'baaanave':'बानवे', 'tiraaanave':'तिरानवे',
+      'chauraanave':'चौरानवे', 'panchaanave':'पंचानवे', 'chhiyaanave':'छियानवे',
+      'sattaanave':'सत्तानवे', 'atthaanave':'अट्ठानवे', 'ninyaanave':'निन्यानवे',
+      'sau':'सौ',
+      // Animals
+      'kuttaa':'कुत्ता', 'billi':'बिल्ली', 'gaay':'गाय', 'ghoda':'घोड़ा',
+      'haathi':'हाथी', 'sher':'शेर', 'baagh':'बाघ', 'bandar':'बंदर',
+      'hiran':'हिरण', 'kharagosh':'खरगोश', 'bhaalu':'भालू', 'lomdi':'लोमड़ी',
+      'jiraaf':'जिराफ', 'zebra':'ज़ेब्रा', 'tota':'तोता', 'machhli':'मछली',
+      'mendhak':'मेंढक', 'saanp':'साँप', 'kachhuwaa':'कछुआ', 'gilhari':'गिलहरी',
+      'unt':'ऊँट', 'bakri':'बकरी', 'bhed':'भेड़', 'murga':'मुर्गा',
+      'battakh':'बत्तख', 'mor':'मोर', 'kaua':'कौआ', 'ullu':'उल्लू',
+      'baaj':'बाज', 'bhains':'भैंस',
+      // Fruits
+      'seb':'सेब', 'kela':'केला', 'aam':'आम', 'angur':'अंगूर',
+      'santra':'संतरा', 'anaanas':'अनानास', 'tarbuz':'तरबूज', 'papeeta':'पपीता',
+      'naariyal':'नारियल', 'amrud':'अमरूद', 'anaar':'अनार',
+      'strawberry':'स्ट्रॉबेरी', 'leechi':'लीची', 'naashpaati':'नाशपाती',
+      'kiwi':'कीवी', 'khajur':'खजूर', 'jaamun':'जामुन', 'cheri':'चेरी',
+      'kharbuja':'खरबूजा', 'ber':'बेर',
+      // Vegetables
+      'aalu':'आलू', 'pyaaj':'प्याज', 'tamaatar':'टमाटर', 'gobhi':'गोभी',
+      'baigan':'बैंगन', 'bhindi':'भिंडी', 'paalak':'पालक', 'gaajar':'गाजर',
+      'matar':'मटर', 'lauki':'लौकी', 'karela':'करेला', 'muli':'मूली',
+      'kheera':'खीरा', 'kaddu':'कद्दू', 'adrak':'अदरक', 'lahsun':'लहसुन',
+      'hari_mirch':'हरी मिर्च', 'mashrum':'मशरूम', 'shakarkand':'शकरकंद',
+      'makka':'मक्का',
+      // Colors
+      'laal':'लाल', 'neela':'नीला', 'hara':'हरा', 'peela':'पीला',
+      'safed':'सफ़ेद', 'kaala':'काला', 'narangi':'नारंगी', 'gulaabi':'गुलाबी',
+      'baingani':'बैंगनी', 'bhoora':'भूरा', 'sona_color':'सोना',
+      'chaandi_color':'चाँदी', 'aasamaani':'आसमानी', 'dhusar':'धूसर',
+      'maroon':'मरून', 'cream':'क्रीम', 'firozi':'फ़िरोज़ी',
+      'jaitooni':'जैतूनी', 'chamkeela':'चमकीला', 'halka':'हल्का',
+      // Body Parts
+      'sir':'सिर', 'aankh':'आँख', 'naak':'नाक', 'kaan':'कान', 'munh':'मुँह',
+      'daant':'दाँत', 'jeebh':'जीभ', 'baal':'बाल', 'gardan':'गर्दन',
+      'kandha':'कंधा', 'haath':'हाथ', 'ungali':'उँगली', 'pet':'पेट',
+      'peeth':'पीठ', 'pair':'पैर', 'ghutna':'घुटना', 'chhaati':'छाती',
+      'dil':'दिल', 'naakhun':'नाखून', 'bhaunh':'भौंह',
+      // Family
+      'maa':'माँ', 'pita':'पिता', 'daada':'दादा', 'daadi':'दादी',
+      'bhai':'भाई', 'bahan':'बहन', 'chacha':'चाचा', 'chaachi':'चाची',
+      'mama':'मामा', 'maami':'मामी', 'beta':'बेटा', 'beti':'बेटी',
+      'pati':'पति', 'patni':'पत्नी', 'naana':'नाना', 'naani':'नानी',
+      'bua':'बुआ', 'bhatija':'भतीजा', 'bhatiji':'भतीजी', 'parivar':'परिवार',
+      // Transport
+      'car':'कार', 'bus':'बस', 'train':'ट्रेन', 'hawai_jahaz':'हवाई जहाज',
+      'jahaz':'जहाज', 'cycle':'साइकिल', 'motorcycle':'मोटरसाइकिल',
+      'truck':'ट्रक', 'auto':'ऑटो', 'helicopter':'हेलीकॉप्टर', 'naav':'नाव',
+      'scooter':'स्कूटर', 'taxi':'टैक्सी', 'metro':'मेट्रो', 'rocket':'रॉकेट',
+      'ricksha':'रिक्शा', 'submarine':'सबमरीन', 'tram':'ट्राम',
+      'ambulance':'एम्बुलेंस', 'antriksh':'अंतरिक्ष यान',
+      // School
+      'kitaab':'किताब', 'pen':'पेन', 'pencil':'पेंसिल', 'rubber':'रबड़',
+      'shaasak':'शासक', 'bag':'बैग', 'notebook':'नोटबुक', 'kaksha':'कक्षा',
+      'chaak':'चाक', 'kainchi':'कैंची', 'rang':'रंग', 'brush':'ब्रश',
+      'gond':'गोंद', 'ghadi':'घड़ी', 'mez':'मेज़', 'kursi':'कुर्सी',
+      'shikshak':'शिक्षक', 'chhaatra':'छात्र', 'school':'स्कूल',
+      'compass':'कम्पास',
+      // Nature
+      'ped':'पेड़', 'phool':'फूल', 'nadi':'नदी', 'pahaad':'पहाड़',
+      'aakaash':'आकाश', 'suraj':'सूरज', 'chaand':'चाँद', 'taara':'तारा',
+      'baadal':'बादल', 'baarish':'बारिश', 'hawa':'हवा', 'barf':'बर्फ',
+      'samudra':'समुद्र', 'jangal':'जंगल', 'registaan':'रेगिस्तान',
+      'jheel':'झील', 'jharna':'झरना', 'ghaas':'घास', 'mitti':'मिट्टी',
+      'patta':'पत्ता',
+      // Food
+      'roti':'रोटी', 'chaawal':'चावल', 'daal':'दाल', 'doodh':'दूध',
+      'dahi':'दही', 'makkhan':'मक्खन', 'paani':'पानी', 'chai':'चाय',
+      'cheeni':'चीनी', 'namak':'नमक', 'tel':'तेल', 'ghee':'घी',
+      'achaar':'अचार', 'mithai':'मिठाई', 'biscuit':'बिस्किट',
+      'samosa':'समोसा', 'idli':'इडली', 'puri':'पूरी', 'khichdi':'खिचड़ी',
+      'sabzi':'सब्ज़ी',
+    };
 
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
+    // ── Main TTS function called by Flutter AudioService ─────────────────────
+    function speakHindi(key) {
+      const text = hindiVocab[key] || key;
+      _speak(text, 'hi-IN');
+    }
+
+    function _speak(text, lang) {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = lang || 'hi-IN';
+      utter.rate = 0.85;
+      utter.pitch = 1.0;
+      utter.volume = 1.0;
+
+      // Prefer a Hindi voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const hiVoice = voices.find(v =>
+        v.lang.startsWith('hi') || v.name.toLowerCase().includes('hindi')
+      );
+      if (hiVoice) utter.voice = hiVoice;
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    // Voices load asynchronously — pre-warm them
+    if (window.speechSynthesis) {
+      window.speechSynthesis.onvoiceschanged = function() {
+        window.speechSynthesis.getVoices();
+      };
+      window.speechSynthesis.getVoices();
+    }
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

@@ -12,7 +12,7 @@ class ProgressScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<AppViewModel>();
     final loc = AppLocalizations.of(context);
-    final total = AppData.items.length;
+    final total = AppData.allItems.length;
     final done = vm.completedIds.length;
 
     return Scaffold(
